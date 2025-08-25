@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поздравление!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 2;
+            max-width: 90%;
+        }
+        
+        h1 {
+            color: #d32f2f;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.4;
+        }
+        
+        .image-container {
+            margin: 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            max-width: 300px;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: #ff4d4d;
+            animation: fall linear forwards;
+            top: -50px;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ты справился со всеми испытаниями, котенок! Время задувать свечи!🎂</h1>
+        <div class="image-container">
+            <img src="love.jpg" alt="Love" onerror="this.style.display='none'">
+        </div>
+    </div>
+    
+    <div class="hearts" id="hearts"></div>
+    
+    <audio id="bgMusic" autoplay loop>
+        <source src="hb.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        // Функция для создания сердечек
+        function createHeart() {
+            const heartsContainer = document.getElementById('hearts');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            
+            // Случайная позиция по горизонтали
+            const left = Math.random() * 100;
+            heart.style.left = left + 'vw';
+            
+            // Случайный размер
+            const size = Math.random() * 25 + 15;
+            heart.style.fontSize = size + 'px';
+            
+            // Случайная скорость падения
+            const duration = Math.random() * 5 + 5;
+            heart.style.animationDuration = duration + 's';
+            
+            // Случайная задержка
+            const delay = Math.random() * 2;
+            heart.style.animationDelay = delay + 's';
+            
+            heartsContainer.appendChild(heart);
+            
+            // Удаление сердечка после завершения анимации
+            setTimeout(() => {
+                heart.remove();
+            }, (duration + delay) * 1000);
+        }
+        
+        // Создаем сердечки каждые 300ms
+        setInterval(createHeart, 300);
+        
+        // Автовоспроизведение музыки
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('bgMusic');
+            
+            // Попытка воспроизведения с обработкой ошибок
+            function playAudio() {
+                audio.play().catch(error => {
+                    console.log('Автовоспроизведение заблокировано:', error);
+                    // Добавляем кнопку для ручного запуска
+                    const playButton = document.createElement('button');
+                    playButton.textContent = '🎵 Включить музыку';
+                    playButton.style.cssText = `
+                        position: fixed;
+                        bottom: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        padding: 15px 25px;
+                        background: #ff4d4d;
+                        color: white;
+                        border: none;
+                        border-radius: 25px;
+                        font-size: 16px;
+                        cursor: pointer;
+                        z-index: 1000;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    `;
+                    playButton.onclick = function() {
+                        audio.play();
+                        playButton.remove();
+                    };
+                    document.body.appendChild(playButton);
+                });
+            }
+            
+            // Запускаем воспроизведение при загрузке
+            playAudio();
+            
+            // Также пробуем запустить при любом взаимодействии пользователя
+            document.addEventListener('click', function() {
+                if (audio.paused) {
+                    audio.play();
+                }
+            }, { once: true });
+        });
+    </script>
+</body>
+</html>
